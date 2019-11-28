@@ -1,0 +1,41 @@
+'use strict';
+module.exports = (sequelize, DataTypes) => {
+  const companies = sequelize.define('companies', {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV1,
+      primaryKey: true,
+      allowNull: false,
+    },
+    companyPhone:{
+        type:DataTypes.STRING,
+        allowNull: false,
+      },
+    companyName: {
+    type:DataTypes.STRING,
+    allowNull: false,
+    },
+    numberType:{
+    type:DataTypes.STRING,
+    allowNull: false,
+    },
+    simType:{
+    type:DataTypes.STRING,
+    allowNull: false,
+    },
+    password:{
+    type:DataTypes.STRING,
+    allowNull: false,
+    },
+    ownerPhone:{
+    type:DataTypes.STRING,
+    allowNull: false,
+    }
+  }, {});
+  companies.associate = function(models) {
+    // associations can be defined here
+    companies.hasMany(models.inboxes, { foreignKey: 'companyid', targetKey: 'id' });
+    companies.hasOne(models.menu, { foreignKey: 'companyid', targetKey: 'id' });
+  };
+  return companies;
+};
