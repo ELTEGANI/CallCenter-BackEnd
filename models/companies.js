@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
   companies.associate = function(models) {
     // associations can be defined here
     companies.hasMany(models.inboxes, { foreignKey: 'companyid', targetKey: 'id' });
-    companies.hasOne(models.menu, { foreignKey: 'companyid', targetKey: 'id' });
+    companies.hasOne(models.menus, { foreignKey: 'companyid', targetKey: 'id' });
   };
   return companies;
 };
