@@ -15,22 +15,26 @@ module.exports = (sequelize, DataTypes) => {
     type:DataTypes.STRING,
     allowNull: false,
     },
-    numberType:{
-    type:DataTypes.STRING,
-    allowNull: false,
-    },
-    simType:{
-    type:DataTypes.STRING,
-    allowNull: false,
-    },
     password:{
     type:DataTypes.STRING,
     allowNull: false,
     },
+    bussinessType:{
+      type:DataTypes.STRING,
+      allowNull: false,
+    },
     ownerPhone:{
     type:DataTypes.STRING,
     allowNull: false,
-    }
+    },
+    ownerName:{
+      type:DataTypes.STRING,
+      allowNull: false,
+      },
+    ownerEmail:{
+        type:DataTypes.STRING,
+        allowNull: false,
+        }
   }, {});
   companies.associate = function(models) {
     // associations can be defined here

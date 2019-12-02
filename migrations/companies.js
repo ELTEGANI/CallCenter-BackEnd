@@ -16,22 +16,26 @@ module.exports = {
         type:Sequelize.STRING,
         allowNull: false,
       },
-      numberType: {
-        type:Sequelize.STRING,
-        allowNull: false,
-      },
-      simType: {
-        type:Sequelize.STRING,
-        allowNull: false,
-      },
       password: {
         type:Sequelize.STRING,
         allowNull: false,
       },
-      ownerPhone: {
+      bussinessType:{
         type:Sequelize.STRING,
         allowNull: false,
       },
+      ownerPhone:{
+        type:Sequelize.STRING,
+      allowNull: false,
+      },
+      ownerName:{
+        type:Sequelize.STRING,
+        allowNull: false,
+        },
+      ownerEmail:{
+        type:Sequelize.STRING,
+          allowNull: false,
+          },
       createdAt: {
         allowNull: false,
         type:Sequelize.DATE
