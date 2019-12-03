@@ -113,26 +113,95 @@ module.exports = {
         err.statusCode = 500;
       }
       next(err);
-    }
+    } 
   }, 
 
   async getAllCompanyInboxes(req, res, next) {
-    const  companyPhone      = req.body.companyphone;
+    console.log(req.body.companyPhone)
+    const  companyphone      = req.body.companyPhone;
     try {
       const messages = await inboxes.findAll({
-        attributes: ['id', 'companyid', 'incomingmessages', 'senderohone', 'status'],
-        where: { companyid:companyPhone},
+        attributes: ['id', 'companyid', 'incomingMessages', 'senderPhone', 'status'],
+        where: { companyid:companyphone},
       });
       res
         .status(200)
-        .json(messages);
+        .json({companyMessages:messages});
     } catch (err) {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
       next(err);
     }
-  } 
+  }, 
 
+
+
+  async getMenuOrOptions(req, res, next){
+    const companyPhone = req.body.companyPhone;
+    const senderPhone = req.body.senderPhone;
+    const messageContent = req.body.messageContent;
+   
+    if(messageContent === "*"){
+      try{
+        const companyMenu = await menus.findAll({
+          attributes: ['questionorder','answers'],
+          where:{companyid:companyPhone}
+        });
+        //  let menu = companyMenu.map((element) => {
+        //   return element.questionorder+' '+element.answers; 
+        //  });
+        //  res.status(200).json(menu)
+          res.status(200).json({menu:companyMenu})
+
+      }catch (err) {
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err);
+      }
+    }
+
+   else if (!isNaN(messageContent)){
+          try{
+            const answer = await menus.findAll({
+              attributes: ['answers'],
+              where:{questionorder:messageContent}
+            });
+            res.status(200).json({answer:answer})
+          }catch (err) {
+            if (!err.statusCode) {
+              err.statusCode = 500;
+            }
+            next(err);
+          }
+  }
+   
+  else{
+    try{
+      const saveMsg = await inboxes.create({
+          companyid:companyPhone,
+          incomingMessages:messageContent,
+          senderPhone:senderPhone,
+          status:"false",
+          })  
+       res.status(201).json({
+          message: "Ok"
+        }) 
+    }catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
+  }
+  },
+  async sendReplyToUser(req, res, next) {
+    const companyPhone = req.body.companyPhone;
+    const userPhone = req.body.userPhone;
+    const replayContent = req.body.replayContent;
+    
+   
+  }
 
 };

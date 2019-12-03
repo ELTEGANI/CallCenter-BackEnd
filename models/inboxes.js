@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
     type:DataTypes.STRING,
     allowNull: false,
     },
-    incomingmessages:{
+    incomingMessages:{
     type:DataTypes.STRING,
     allowNull: false,
     },
-    senderohone:{
+    senderPhone:{
     type:DataTypes.STRING,
     allowNull: false,
     },

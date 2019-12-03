@@ -10,7 +10,7 @@ const isAuth = require('../authenticationMiddleware/middleware');
 router.post('/registercompany',companyController.signUpCompany);
 router.post('/logincompany',companyController.loginCompany);
 router.post('/createmenu',companyController.createMenu);
-router.get('/getallmessages',companyController.getAllCompanyInboxes);
-
+router.post('/getallmessages',companyController.getAllCompanyInboxes);
+router.get('/displaymenuandoptions',companyController.getMenuOrOptions);
 
 module.exports = router;
