@@ -1,6 +1,7 @@
 const { menus ,inboxes,companies} = require('../models');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
+const {postMenu,postReplay} = require('../utiltes/sendtosmsgateway');
 require('dotenv').config();
 
 
@@ -122,7 +123,7 @@ module.exports = {
     try {
       const messages = await inboxes.findAll({
         attributes: ['id', 'companyid', 'incomingMessages', 'senderPhone', 'status'],
-        where: { companyid:companyphone},
+        where: { companyid:companyphone,status:"false"},
       });
       res
         .status(200)
@@ -148,19 +149,19 @@ module.exports = {
           attributes: ['questionorder','answers'],
           where:{companyid:companyPhone}
         });
-        //  let menu = companyMenu.map((element) => {
-        //   return element.questionorder+' '+element.answers; 
-        //  });
-        //  res.status(200).json(menu)
-          res.status(200).json({menu:companyMenu})
-
+        if(companyMenu){
+        //post menu to sms gateway
+        const sendMsgToSmsGateWay = await postMenu(companyMenu) 
+        console.log(sendMsgToSmsGateWay);
+        res.status(200).json({companyMenu})
+        }
       }catch (err) {
         if (!err.statusCode) {
           err.statusCode = 500;
         }
         next(err);
       }
-    }
+  }
 
    else if (!isNaN(messageContent)){
           try{
@@ -168,7 +169,12 @@ module.exports = {
               attributes: ['answers'],
               where:{questionorder:messageContent}
             });
+            if(answer){
+            //post menu to sms gateway
+            const sendMsgToSmsGateWay = await postMenu(answer) 
+            console.log(sendMsgToSmsGateWay);
             res.status(200).json({answer:answer})
+            }
           }catch (err) {
             if (!err.statusCode) {
               err.statusCode = 500;
@@ -183,11 +189,15 @@ module.exports = {
           companyid:companyPhone,
           incomingMessages:messageContent,
           senderPhone:senderPhone,
-          status:"false",
-          })  
-       res.status(201).json({
-          message: "Ok"
-        }) 
+          status:"false"}
+          );
+          if(saveMsg){
+            const feedBackToUSer = "تم استعلامك وسيتم الرد عليك قريبا";
+            const sendMsgToSmsGateWay = await postMenu(feedBackToUSer) 
+            console.log(sendMsgToSmsGateWay);   
+            res.status(201).json({message: "Ok"}) 
+          }
+         
     }catch (err) {
       if (!err.statusCode) {
         err.statusCode = 500;
@@ -195,13 +205,32 @@ module.exports = {
       next(err);
     }
   }
-  },
-  async sendReplyToUser(req, res, next) {
-    const companyPhone = req.body.companyPhone;
-    const userPhone = req.body.userPhone;
-    const replayContent = req.body.replayContent;
-    
-   
-  }
+},
+
+
+  // async sendReplyToUser(req, res, next) {
+  //   const companyPhone = req.body.companyPhone;
+  //   const userPhone = req.body.userPhone;
+  //   const replayContent = req.body.replayContent;
+
+  //   //send admin feedback to user
+  //   let sendReplayToUser = {companyPhone:companyPhone,userPhone:userPhone,replay:replayContent};
+  //   const sendMsgToSmsGateWay = await postReplay(JSON.stringify(sendReplayToUser)); 
+  //   console.log(sendMsgToSmsGateWay);
+  //   try{
+  //     if(sendMsgToSmsGateWay){
+  //       const updatedInboxes = await inboxes.update({
+  //         status:"true"
+  //       }, { where: { companyid: companyPhone } });
+  //       console.log(updatedInboxes);
+  //       res.status(200).json({message: "Replyed Done"}) 
+  //     }
+  //   }catch (err) {
+  //     if (!err.statusCode) {
+  //       err.statusCode = 500;
+  //     }
+  //     next(err);
+  //   }
+  // }
 
 };
