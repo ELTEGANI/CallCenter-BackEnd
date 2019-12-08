@@ -9,7 +9,7 @@ module.exports = {
   async signUpCompany(req, res, next) {
     const  companyPhone  = req.body.companyPhone;
     const  companyName  = req.body.companyName;
-    const  password  = req.body.password;
+    const  password  = Math.random().toString(4).substring(2,5) + Math.random().toString(4).substring(2,5)
     const  bussinessType  = req.body.bussinessType;
     const  ownerPhone  = req.body.ownerPhone;
     const  ownerName  = req.body.ownerName;
@@ -35,8 +35,11 @@ module.exports = {
          res
         .status(201)
         .json({
-          meesage:"Company Registered Successfully"
+          meesage:"Company Registered Successfully",
+          password:password
         })
+        //send password to smsgateway
+        console.log(password);
       }
     }catch (error) {
       if (!error.statusCode) {
@@ -81,15 +84,15 @@ module.exports = {
     }
   },
   
-  async createMenu(req, res, next){
+  async createMenu(req, res, next){ 
     console.log(req.body);
-    try {
-      const isCompanyHasMenu = await menus.findOne({ where: {companyid:req.body.companyid}});
-      if(isCompanyHasMenu){
-        res.status(200).json({
-          message: 'You Already Has Menu'
-        })     
-      }else{
+     try {
+    //   const isCompanyHasMenu = await menus.findOne({ where: {companyid:req.body.companyid}});
+    //   if(isCompanyHasMenu){
+    //     res.status(200).json({
+    //       message: 'You Already Has Menu'
+    //     })     
+    //   }else{
         try{
           const createMenu = await req.body.questionsandanswer.map((answers) => {
             menus.create({
@@ -108,7 +111,7 @@ module.exports = {
         }
         next(err);
       }
-      }
+      //}
     } catch (err) {
       if (!err.statusCode) {
         err.statusCode = 500;
@@ -139,6 +142,7 @@ module.exports = {
 
 
   async getMenuOrOptions(req, res, next){
+    console.log(req);
     const companyPhone = req.body.companyPhone;
     const senderPhone = req.body.senderPhone;
     const messageContent = req.body.messageContent;
@@ -151,8 +155,8 @@ module.exports = {
         });
         if(companyMenu){
         //post menu to sms gateway
-        const sendMsgToSmsGateWay = await postMenu(companyMenu) 
-        console.log(sendMsgToSmsGateWay);
+        // const sendMsgToSmsGateWay = await postMenu(companyMenu) 
+        // console.log(sendMsgToSmsGateWay);
         res.status(200).json({companyMenu})
         }
       }catch (err) {
@@ -171,8 +175,8 @@ module.exports = {
             });
             if(answer){
             //post menu to sms gateway
-            const sendMsgToSmsGateWay = await postMenu(answer) 
-            console.log(sendMsgToSmsGateWay);
+            // const sendMsgToSmsGateWay = await postMenu(answer) 
+            // console.log(sendMsgToSmsGateWay);
             res.status(200).json({answer:answer})
             }
           }catch (err) {
@@ -192,9 +196,9 @@ module.exports = {
           status:"false"}
           );
           if(saveMsg){
-            const feedBackToUSer = "تم استعلامك وسيتم الرد عليك قريبا";
-            const sendMsgToSmsGateWay = await postMenu(feedBackToUSer) 
-            console.log(sendMsgToSmsGateWay);   
+            // const feedBackToUSer = "تم استعلامك وسيتم الرد عليك قريبا";
+            // const sendMsgToSmsGateWay = await postMenu(feedBackToUSer) 
+            // console.log(sendMsgToSmsGateWay);   
             res.status(201).json({message: "Ok"}) 
           }
          
