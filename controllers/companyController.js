@@ -85,23 +85,25 @@ module.exports = {
   },
   
   async createMenu(req, res, next){ 
-    console.log(req.body);
      try {
-    //   const isCompanyHasMenu = await menus.findOne({ where: {companyid:req.body.companyid}});
-    //   if(isCompanyHasMenu){
-    //     res.status(200).json({
-    //       message: 'You Already Has Menu'
-    //     })     
-    //   }else{
+      const isCompanyHasMenu = await menus.findOne({ where: {companyid:req.body.companyid}});
+      if(isCompanyHasMenu){
+        res.status(200).json({
+          message: 'You Already Has Menu'
+        })     
+      }else{
         try{
-          const createMenu = await req.body.questionsandanswer.map((answers) => {
-            menus.create({
-              questions:answers.question,
-              answers:answers.answer,
-              questionorder:answers.questionorder,
-              companyid:answers.companyid,
-              })
-            })  
+          await Promise.all( 
+            req.body.questionsandanswer.map(async (answers) => {
+              const createMenu = await menus.create({
+                questions:answers.question,
+                answers:answers.answer,
+                questionorder:answers.questionorder,
+                companyid:answers.companyid,
+                })
+                console.log(createMenu)
+              }) 
+              );
            res.status(201).json({
               message: 'Your Menu Created Successfully'
             })  
@@ -111,7 +113,7 @@ module.exports = {
         }
         next(err);
       }
-      //}
+      }
     } catch (err) {
       if (!err.statusCode) {
         err.statusCode = 500;

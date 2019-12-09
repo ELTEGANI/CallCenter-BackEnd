@@ -64,7 +64,7 @@ test('should not logedin user with incorrect credentials',async() => {
                               
                           }
                      ],
-                     companyid:"0901589567"   
+                     companyid:"0999991230"   
        }
      )  
      expect(res.status).toBe(401);  
@@ -75,16 +75,16 @@ test('should not logedin user with incorrect credentials',async() => {
     .post('/api/companies/createmenu')
     .set('Authorization', `Bearer ${token}`)
     .send({questionsandanswer: 
-                      [
+                      [  
                           {
-                            questions:"what are the zain services",
-                            answers:"internet-mdsl-calls",
+                            question:"what are the zain services",
+                            answer:"internet-mdsl-calls",
                             questionorder:"1",
                             companyid:"0999991230"
                           },
                          {
-                            questions:"what are the zain services",
-                            answers:"internet-mdsl-calls",
+                            question:"what are the zain services",
+                            answer:"internet-mdsl-calls",
                             questionorder:"2",
                             companyid:"0999991230"       
                           }
