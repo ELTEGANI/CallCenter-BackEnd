@@ -117,15 +117,15 @@ test('should not logedin user with incorrect credentials',async() => {
   }); 
 
 
-  test('should get company menu',async() => {
+  test('should get company menu,answers of options in menu ,save user questions in inbox and save number of question for statistics ',async() => {
     const res = await request(server)
     .get('/api/companies/displaymenuandoptions')
     .send({
       companyPhone:"0999991230",
       senderPhone:"0901589567",
-      messageContent:"hi all"
+      messageContent:"1"
     })  
-     expect(res.status).toBe(201);  
+     expect(res.status).toBe(200);  
      //messageContent = * to get main menu
     //  expect(res.body).toMatchObject({
     //    "companyMenu": 
@@ -142,17 +142,17 @@ test('should not logedin user with incorrect credentials',async() => {
     //   })
 
     //messageContent = 1 to get answer
-    //  expect(res.body).toMatchObject({
-    //    "answer":[
-    //      {
-    //         "answers":"internet-mdsl-calls"
-    //      }
-    //     ]
-    //   })
+     expect(res.body).toMatchObject({
+       "answer":[
+         {
+            "answers":"internet-mdsl-calls"
+         }
+        ]
+      })
 
    //messageContent = "text" to get answer
-      expect(res.body).toMatchObject({
-        message: "Ok"
-      })
+      // expect(res.body).toMatchObject({
+      //   message: "Ok"
+      // })
 
   }); 

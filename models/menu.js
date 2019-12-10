@@ -27,6 +27,8 @@ module.exports = (sequelize, DataTypes) => {
   menu.associate = function(models) {
     // associations can be defined here
     menu.belongsTo(models.companies, { foreignKey: 'companyid', targetKey: 'id' });
+    menu.hasMany(models.Statistics, { foreignKey: 'questionNumber', targetKey: 'companyid' });
+
   };
   return menu;
 };

@@ -1,4 +1,4 @@
-const { menus ,inboxes,companies} = require('../models');
+const { menus ,inboxes,companies,Statistics} = require('../models');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const {postMenu,postReplay} = require('../utiltes/sendtosmsgateway');
@@ -168,16 +168,19 @@ module.exports = {
       }
   }
 
-   else if (!isNaN(messageContent)){
+   else if (!isNaN(messageContent)) {
+     try{
+      const createdStatistic = await Statistics.create({
+        questionNumber:messageContent,
+        companyNumber:companyPhone,
+        })
+        if(createdStatistic){
           try{
             const answer = await menus.findAll({
               attributes: ['answers'],
               where:{questionorder:messageContent}
             });
             if(answer){
-            //post menu to sms gateway
-            // const sendMsgToSmsGateWay = await postMenu(answer) 
-            // console.log(sendMsgToSmsGateWay);
             res.status(200).json({answer:answer})
             }
           }catch (err) {
@@ -186,6 +189,13 @@ module.exports = {
             }
             next(err);
           }
+        }
+     }catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
   }
    
   else{
