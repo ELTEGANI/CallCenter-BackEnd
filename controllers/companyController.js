@@ -144,7 +144,6 @@ module.exports = {
 
 
   async getMenuOrOptions(req, res, next){
-    console.log(req);
     const companyPhone = req.body.companyPhone;
     const senderPhone = req.body.senderPhone;
     const messageContent = req.body.messageContent;
@@ -152,7 +151,7 @@ module.exports = {
     if(messageContent === "*"){
       try{
         const companyMenu = await menus.findAll({
-          attributes: ['questionorder','answers'],
+          attributes: ['questionorder','questions'],
           where:{companyid:companyPhone}
         });
         if(companyMenu){

@@ -91,8 +91,68 @@ test('should not logedin user with incorrect credentials',async() => {
                      ],
                      companyid:"0999991230"   
        })  
-     expect(res.status).toBe(201);  
+     expect(res.status).toBe(200);  
   }); 
 
-  test.todo("test for get all messages")
-  test.todo("test for get menu options")
+  test('should not get company inbox messages without auth',async() => {
+    const res = await request(server)
+    .post('/api/companies/getallmessages')
+    // .set('Authorization', `Bearer ${token}`)
+    .send({
+      companyPhone:"0999991230"
+    })  
+     expect(res.status).toBe(401);  
+  }); 
+
+
+  test('should get company inbox messages with auth',async() => {
+    const res = await request(server)
+    .post('/api/companies/getallmessages')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
+      companyPhone:"0999991230"
+    })  
+     expect(res.status).toBe(200);  
+     expect(res.body).not.toBe(null)
+  }); 
+
+
+  test('should get company menu',async() => {
+    const res = await request(server)
+    .get('/api/companies/displaymenuandoptions')
+    .send({
+      companyPhone:"0999991230",
+      senderPhone:"0901589567",
+      messageContent:"hi all"
+    })  
+     expect(res.status).toBe(201);  
+     //messageContent = * to get main menu
+    //  expect(res.body).toMatchObject({
+    //    "companyMenu": 
+    //    [
+    //      {
+    //        "questionorder": "1",
+    //         "questions": "what are the zain services"
+    //      },
+    //      {
+    //        "questionorder": "2",
+    //        "questions": "what are the zain services"
+    //       }
+    //     ]
+    //   })
+
+    //messageContent = 1 to get answer
+    //  expect(res.body).toMatchObject({
+    //    "answer":[
+    //      {
+    //         "answers":"internet-mdsl-calls"
+    //      }
+    //     ]
+    //   })
+
+   //messageContent = "text" to get answer
+      expect(res.body).toMatchObject({
+        message: "Ok"
+      })
+
+  }); 
