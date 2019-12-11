@@ -1,7 +1,8 @@
 const { menus ,inboxes,companies,Statistics} = require('../models');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
-const {postMenu,postReplay} = require('../utiltes/sendtosmsgateway');
+const sequelize = require('sequelize');
+
 require('dotenv').config();
 
 
@@ -248,4 +249,27 @@ module.exports = {
   //   }
   // }
 
+  async showStatistic (req,res,next){
+     const companyPhone = req.body.companyPhone;
+     try{
+        const calculatestatistic = await Statistics.findAll({
+          attributes: [
+            'questionNumber',
+            [sequelize.fn('COUNT',sequelize.col('questionNumber')), 'number of inqueries'],
+          ],
+          where: { companyNumber:companyPhone },
+          group: 'questionNumber',
+          raw: true,
+          logging: true
+        })
+        res.status(200).json({Statistics:calculatestatistic}) 
+     }catch (err) {
+          if (!err.statusCode) {
+            err.statusCode = 500;
+          }
+          next(err);
+   }
+  }
+
+  
 };

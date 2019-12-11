@@ -12,6 +12,7 @@ router.post('/logincompany',companyController.loginCompany);
 router.post('/createmenu',isAuth,companyController.createMenu);
 router.post('/getallmessages',isAuth,companyController.getAllCompanyInboxes);
 router.get('/displaymenuandoptions',companyController.getMenuOrOptions);
+router.get('/statistic',isAuth,companyController.showStatistic);
 
 
 module.exports = router;
