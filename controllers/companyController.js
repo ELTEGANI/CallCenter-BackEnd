@@ -2,7 +2,7 @@ const { menus ,inboxes,companies,Statistics} = require('../models');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const sequelize = require('sequelize');
-
+const Op = require('sequelize');
 require('dotenv').config();
 
 
@@ -61,6 +61,7 @@ module.exports = {
           throw error;    
     }else{
       const isPasswordEquel = await bcrypt.compare(password,isCompanyFound.password);
+      console.log(isPasswordEquel);
       if(!isPasswordEquel){
         const error = new Error('Worng Password');
         error.statusCode = 401;
@@ -254,12 +255,12 @@ module.exports = {
      try{
         const calculatestatistic = await Statistics.findAll({
           attributes: [
-            'questionNumber',
-            [sequelize.fn('COUNT',sequelize.col('questionNumber')), 'number of inqueries'],
+            'questionNumber', 
+            [sequelize.fn('COUNT',sequelize.col('questionNumber')), 'inqueries']
           ],
           where: { companyNumber:companyPhone },
           group: 'questionNumber',
-          raw: true,
+          raw: true,  
           logging: true
         })
         res.status(200).json({Statistics:calculatestatistic}) 
@@ -269,6 +270,24 @@ module.exports = {
           }
           next(err);
    }
+  },
+
+  async getMenu (req,res,next){
+    const companyPhone = req.body.companyPhone;
+     try{
+     const menu = await menus.findAll({
+      attributes: ['questionorder','questions','answers'],
+      where:{companyid:companyPhone}
+     })
+     if(menu){
+      res.status(200).json(menu)
+      }
+     }catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+  }
   }
 
   
