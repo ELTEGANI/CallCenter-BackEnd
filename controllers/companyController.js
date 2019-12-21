@@ -275,7 +275,7 @@ module.exports = {
   async getMenu (req,res,next){
     const companyPhone = req.body.companyPhone;
      try{
-     const menu = await menus.findAll({
+     const menu = await menus.findAll({   
       attributes: ['questionorder','questions','answers'],
       where:{companyid:companyPhone}
      })
@@ -288,7 +288,34 @@ module.exports = {
       }
       next(err);
   }
-  }
+  },
 
+
+  async updateMenu(req,res,next){
+    const companyPhone = req.body.companyid;
+    try{
+      const deleted = await menus.destroy({ where: { companyid:companyPhone } });
+      console.log(deleted)
+      await Promise.all( 
+        req.body.questionsandanswer.map(async (answers) => {
+          const createMenu = await menus.create({
+            questions:answers.questions,
+            answers:answers.answers,
+            questionorder:answers.questionorder,
+            companyid:answers.companyid,
+            })
+          }) 
+          );
+       res.status(201).json({
+          message: 'Your Menu Updated Successfully'
+        })  
+    } catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
+  }
   
+
 };
