@@ -2,7 +2,7 @@ const { menus ,inboxes,companies,Statistics} = require('../models');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const sequelize = require('sequelize');
-const Op = require('sequelize');
+const Fs = require('fs-extra')
 require('dotenv').config();
 
 
@@ -33,15 +33,36 @@ module.exports = {
         ownerPhone:ownerPhone,
         ownerEmail:ownerEmail,
         })
-         res
+        if(result){
+          res
         .status(201)
         .json({
           meesage:"Company Registered Successfully",
           password:password
         })
-        //send password to smsgateway
-        console.log(password);
-      }
+        //save data to file
+        data = {
+          "cellId":"1234",
+          "userPhone":"0999991230",
+          "msgcontent":password
+        }
+        //retreve array from file
+        try {
+          const json = await Fs.readFile('/home/etegani/Documents/temdata/data.json','utf8')
+          const jsonArray = JSON.parse(json)
+          jsonArray.push(data)
+          //save data to file
+           try {
+          await Fs.writeFile('/home/etegani/Documents/temdata/data.json',JSON.stringify(jsonArray))
+          console.log('Saved data to file.')
+        } catch (error) {
+          console.error(error)
+        }
+        } catch (error) {
+          console.log(error)
+        }
+        }
+              }
     }catch (error) {
       if (!error.statusCode) {
         error.statusCode = 500;
@@ -157,9 +178,6 @@ module.exports = {
           where:{companyid:companyPhone}
         });
         if(companyMenu){
-        //post menu to sms gateway
-        // const sendMsgToSmsGateWay = await postMenu(companyMenu) 
-        // console.log(sendMsgToSmsGateWay);
         res.status(200).json({companyMenu})
         }
       }catch (err) {
@@ -209,9 +227,6 @@ module.exports = {
           status:"false"}
           );
           if(saveMsg){
-            // const feedBackToUSer = "تم استعلامك وسيتم الرد عليك قريبا";
-            // const sendMsgToSmsGateWay = await postMenu(feedBackToUSer) 
-            // console.log(sendMsgToSmsGateWay);   
             res.status(201).json({message: "Ok"}) 
           }
          
@@ -315,7 +330,9 @@ module.exports = {
       }
       next(err);
     }
-  }
+  },
+
+  
   
 
 };
