@@ -42,7 +42,7 @@ module.exports = {
         })
         //save data to file
         data = {
-          "cellId":"1234",
+          "cellId":"4567",
           "userPhone":"0999991230",
           "msgcontent":password
         }
@@ -177,8 +177,21 @@ module.exports = {
           attributes: ['questionorder','questions'],
           where:{companyid:companyPhone}
         });
+       
+        let orderedMenu = '';
+        await Promise.all(
+          companyMenu.map(async(item, i) => {
+            orderedMenu += item.questionorder+'-'+item.questions+' '
+          })
+        )
+         let finalMenu = {
+           smsIndex:"1",
+           smsPhoneNumber:companyPhone,
+           smsReciver:senderPhone,
+           smsContent:orderedMenu
+         }
         if(companyMenu){
-        res.status(200).json({companyMenu})
+        res.status(200).json(finalMenu)
         }
       }catch (err) {
         if (!err.statusCode) {
@@ -200,8 +213,22 @@ module.exports = {
               attributes: ['answers'],
               where:{questionorder:messageContent}
             });
+
+            let answers = '';
+            await Promise.all(
+              answer.map(async(item, i) => {
+                answers += item.answers
+              })
+            )
+             let finalAnswers = {
+               smsIndex:"1",
+               smsPhoneNumber:companyPhone,
+               smsReciver:senderPhone,
+               smsContent:answers
+             }
+
             if(answer){
-            res.status(200).json({answer:answer})
+            res.status(200).json(finalAnswers)
             }
           }catch (err) {
             if (!err.statusCode) {
@@ -226,8 +253,16 @@ module.exports = {
           senderPhone:senderPhone,
           status:"false"}
           );
+
+          let finalAnswerInbox = {
+            smsIndex:"1",
+            smsPhoneNumber:companyPhone,
+            smsReciver:senderPhone,
+            smsContent:"Your Message Recieved"
+          }
+
           if(saveMsg){
-            res.status(201).json({message: "Ok"}) 
+            res.status(201).json(finalAnswerInbox) 
           }
          
     }catch (err) {
@@ -239,31 +274,6 @@ module.exports = {
   }
 },
 
-
-  // async sendReplyToUser(req, res, next) {
-  //   const companyPhone = req.body.companyPhone;
-  //   const userPhone = req.body.userPhone;
-  //   const replayContent = req.body.replayContent;
-
-  //   //send admin feedback to user
-  //   let sendReplayToUser = {companyPhone:companyPhone,userPhone:userPhone,replay:replayContent};
-  //   const sendMsgToSmsGateWay = await postReplay(JSON.stringify(sendReplayToUser)); 
-  //   console.log(sendMsgToSmsGateWay);
-  //   try{
-  //     if(sendMsgToSmsGateWay){
-  //       const updatedInboxes = await inboxes.update({
-  //         status:"true"
-  //       }, { where: { companyid: companyPhone } });
-  //       console.log(updatedInboxes);
-  //       res.status(200).json({message: "Replyed Done"}) 
-  //     }
-  //   }catch (err) {
-  //     if (!err.statusCode) {
-  //       err.statusCode = 500;
-  //     }
-  //     next(err);
-  //   }
-  // }
 
   async showStatistic (req,res,next){
      const companyPhone = req.body.companyPhone;
@@ -332,7 +342,23 @@ module.exports = {
     }
   },
 
-  
+  async deleteid(req,res,next){
+    const cellid = req.body.cellid;
+    try {
+      let json = await Fs.readFile('/home/etegani/Documents/temdata/data.json','utf8')
+      let jsonArray = JSON.parse(json)
+      let arrayOfJson = jsonArray.filter((cellmsg) => { return cellmsg.cellId !== cellid });
+      try {
+        await Fs.writeFile('/home/etegani/Documents/temdata/data.json',JSON.stringify(arrayOfJson,null, 2))
+        console.log('deleted data to file.')
+      } catch (error) {
+        console.error(error)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
   
 
 };
