@@ -15,7 +15,8 @@ router.get('/displaymenuandoptions',companyController.getMenuOrOptions);
 router.post('/statistic',isAuth,companyController.showStatistic);
 router.post('/getmenus',isAuth,companyController.getMenu);
 router.post('/updatemenus',isAuth,companyController.updateMenu);
-router.post('/deletecell',companyController.deleteid);
+router.post('/deletecell',companyController.deleteSms);
+router.get('/getallsms',companyController.getAllSms);
 
 
 module.exports = router;

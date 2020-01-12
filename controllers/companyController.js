@@ -342,7 +342,7 @@ module.exports = {
     }
   },
 
-  async deleteid(req,res,next){
+  async deleteSms(req,res,next){
     const cellid = req.body.cellid;
     try {
       let json = await Fs.readFile('data/data.json','utf8')
@@ -355,6 +355,20 @@ module.exports = {
         })  
       } catch (error) {
         console.error(error)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+  async getAllSms(req,res,next){
+    const cellid = req.body.cellid;
+    try {
+      let json = await Fs.readFile('data/data.json','utf8')
+      let jsonArray = JSON.parse(json)
+      let arrayOfJson = jsonArray.filter((cellmsg) => { return cellmsg.cellId == cellid });
+      if(arrayOfJson){
+        res.status(200).json(arrayOfJson)
       }
     } catch (error) {
       console.log(error)
