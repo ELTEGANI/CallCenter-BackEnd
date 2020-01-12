@@ -43,17 +43,17 @@ module.exports = {
         //save data to file
         data = {
           "cellId":"4567",
-          "userPhone":"0999991230",
+          "userPhone":ownerPhone,
           "msgcontent":password
         }
         //retreve array from file
         try {
-          const json = await Fs.readFile('/home/etegani/Documents/temdata/data.json','utf8')
+          const json = await Fs.readFile('data/data.json','utf8')
           const jsonArray = JSON.parse(json)
           jsonArray.push(data)
           //save data to file
            try {
-          await Fs.writeFile('/home/etegani/Documents/temdata/data.json',JSON.stringify(jsonArray))
+          await Fs.writeFile('data/data.json',JSON.stringify(jsonArray))
           console.log('Saved data to file.')
         } catch (error) {
           console.error(error)
@@ -345,12 +345,14 @@ module.exports = {
   async deleteid(req,res,next){
     const cellid = req.body.cellid;
     try {
-      let json = await Fs.readFile('/home/etegani/Documents/temdata/data.json','utf8')
+      let json = await Fs.readFile('data/data.json','utf8')
       let jsonArray = JSON.parse(json)
       let arrayOfJson = jsonArray.filter((cellmsg) => { return cellmsg.cellId !== cellid });
       try {
-        await Fs.writeFile('/home/etegani/Documents/temdata/data.json',JSON.stringify(arrayOfJson,null, 2))
-        console.log('deleted data to file.')
+       await Fs.writeFile('data/data.json',JSON.stringify(arrayOfJson,null, 2)) 
+       res.status(200).json({
+          message: 'data deleted successfuly'
+        })  
       } catch (error) {
         console.error(error)
       }
