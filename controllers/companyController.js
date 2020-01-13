@@ -373,8 +373,41 @@ module.exports = {
     } catch (error) {
       console.log(error)
     }
+  },
 
+
+   async sendReplyToUser(req, res, next) {
+    const companyPhone = req.body.companyPhone;
+    const userPhone = req.body.userPhone;
+    const replayContent = req.body.replayContent;
+    const cellId ="1002"
+
+     //save data to file
+     data = {
+      "cellId":cellId,
+      "userPhone":userPhone,
+      "msgcontent":replayContent,
+      "companyPhone":companyPhone
+    }
+     //retreve array from file
+     try {
+      const json = await Fs.readFile('data/data.json','utf8')
+      const jsonArray = JSON.parse(json)
+      jsonArray.push(data)
+      //save data to file
+       try {
+      await Fs.writeFile('data/data.json',JSON.stringify(jsonArray))
+      res.status(200).json({
+        message: 'Replay Saved successfuly'
+      })  
+      console.log('Saved data to file.')
+    } catch (error) {
+      console.error(error)
+    }
+    } catch (error) {
+      console.log(error)
   }
+}
   
 
 };

@@ -17,6 +17,7 @@ router.post('/getmenus',isAuth,companyController.getMenu);
 router.post('/updatemenus',isAuth,companyController.updateMenu);
 router.post('/deletecell',companyController.deleteSms);
 router.get('/getallsms',companyController.getAllSms);
+router.post('/sendReplayToUser',companyController.sendReplyToUser);
 
 
 module.exports = router;
