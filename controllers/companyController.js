@@ -1,4 +1,4 @@
-const { menus ,inboxes,companies,Statistics} = require('../models');
+const { menus ,inboxes,companies,Statistics,User} = require('../models');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const sequelize = require('sequelize');
@@ -178,10 +178,10 @@ module.exports = {
           where:{companyid:companyPhone}
         });
        
-        let orderedMenu = '';
+        let orderedMenu = [];
         await Promise.all(
           companyMenu.map(async(item, i) => {
-            orderedMenu += item.questionorder+'-'+item.questions+' '
+            orderedMenu.push(item.questionorder+'-'+item.questions)
           })
         )
          let finalMenu = {
@@ -386,9 +386,8 @@ module.exports = {
      data = {
       "cellId":cellId,
       "userPhone":userPhone,
-      "msgcontent":replayContent,
-      "companyPhone":companyPhone
-    }
+      "msgcontent":replayContent
+        }
      //retreve array from file
      try {
       const json = await Fs.readFile('data/data.json','utf8')
@@ -407,7 +406,152 @@ module.exports = {
     } catch (error) {
       console.log(error)
   }
+},
+
+
+async signUpUser(req, res, next) {
+  const  phoneNumber      = req.body.phoneNumber;
+  const  gender           = req.body.gender;
+  const  age              = req.body.age;
+
+
+    const user = await User.findOne({ where: { phone_number:phoneNumber } });
+    if (!user) {
+      try {
+        const result = await User.create({
+          phone_number:phoneNumber,
+          gender:gender,
+          age:age,
+        });
+        const token = jwt.sign({ userId: result.id }, process.env.JWT_SEC);
+        res
+          .status(201)
+          .json({
+            accessToken: token
+          });
+      } catch (error) {
+        if (!error.statusCode) {
+          error.statusCode = 500;
+        }
+        next(error);
+      }
+    } else {
+       try{
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SEC);
+        res
+          .status(200)
+          .json({
+            accessToken: token
+          });
+      } catch (error) {  
+        if (!error.statusCode) {
+          error.statusCode = 500;
+        }
+        next(error);
+      }
+    }
+},
+
+
+async getMenuOrOptionsforuser(req, res, next){
+  const companyPhone = req.body.companyPhone;
+  const messageContent = req.body.messageContent;
+ 
+  if(messageContent === "*"){
+    try{
+      const companyMenu = await menus.findAll({
+        attributes: ['questionorder','questions'],
+        where:{companyid:companyPhone}
+      });
+     
+      let orderedMenu = [];
+      await Promise.all(
+        companyMenu.map(async(item, i) => {
+          orderedMenu.push(item.questionorder+'-'+item.questions)
+        })
+      )
+       let finalMenu = {
+         smsContent:orderedMenu
+       }
+      if(companyMenu){
+      res.status(200).json(finalMenu)
+      }
+    }catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
 }
-  
+
+ else if (!isNaN(messageContent)) {
+   try{
+    const createdStatistic = await Statistics.create({
+      questionNumber:messageContent,
+      companyNumber:companyPhone,
+      })
+      if(createdStatistic){
+        try{
+          const answer = await menus.findAll({
+            attributes: ['answers'],
+            where:{questionorder:messageContent}
+          });
+
+          let answers = '';
+          await Promise.all(
+            answer.map(async(item, i) => {
+              answers += item.answers
+            })
+          )
+           let finalAnswers = {
+             smsContent:answers
+           }
+
+          if(answer){
+          res.status(200).json(finalAnswers)
+          }
+        }catch (err) {
+          if (!err.statusCode) {
+            err.statusCode = 500;
+          }
+          next(err);
+        }
+      }
+   }catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+}
+ 
+else{
+  // try{
+  //   const saveMsg = await inboxes.create({
+  //       companyid:companyPhone,
+  //       incomingMessages:messageContent,
+  //       senderPhone:senderPhone,
+  //       status:"false"}
+  //       );
+
+  //       let finalAnswerInbox = {
+  //         smsIndex:"1",
+  //         smsPhoneNumber:companyPhone,
+  //         smsReciver:senderPhone,
+  //         smsContent:"Your Message Recieved"
+  //       }
+
+  //       if(saveMsg){
+  //         res.status(201).json(finalAnswerInbox) 
+  //       }
+       
+  // }catch (err) {
+  //   if (!err.statusCode) {
+  //     err.statusCode = 500;
+  //   }
+  //   next(err);
+  // }
+}
+}
 
 };

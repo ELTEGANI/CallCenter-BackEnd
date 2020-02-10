@@ -1,1 +1,18 @@
-[{"cellId":"100","userPhone":"0999991230","msgcontent":"130202"},{"cellId":"100","userPhone":"0999991230","msgcontent":"103112"},{"cellId":"1002","userPhone":"0901589567","msgcontent":"visit us in our company for more informations","companyPhone":"0999991230"},{"cellId":"1003","userPhone":"0901589567","msgcontent":"visit us in our company for more informations","companyPhone":"0999991230"}]
+[
+  {
+    "cellId": "100",
+    "userPhone": "0999991230",
+    "msgcontent": "130202"
+  },
+  {
+    "cellId": "100",
+    "userPhone": "0999991230",
+    "msgcontent": "103112"
+  },
+  {
+    "cellId": "1003",
+    "userPhone": "0901589567",
+    "msgcontent": "visit us in our company for more informations",
+    "companyPhone": "0999991230"
+  }
+]
