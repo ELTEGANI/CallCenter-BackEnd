@@ -455,6 +455,7 @@ async signUpUser(req, res, next) {
 
 async getMenuOrOptionsforuser(req, res, next){
   const companyPhone = req.body.companyPhone;
+  const senderPhone = req.body.senderPhone;
   const messageContent = req.body.messageContent;
  
   if(messageContent === "*"){
@@ -526,31 +527,26 @@ async getMenuOrOptionsforuser(req, res, next){
 }
  
 else{
-  // try{
-  //   const saveMsg = await inboxes.create({
-  //       companyid:companyPhone,
-  //       incomingMessages:messageContent,
-  //       senderPhone:senderPhone,
-  //       status:"false"}
-  //       );
-
-  //       let finalAnswerInbox = {
-  //         smsIndex:"1",
-  //         smsPhoneNumber:companyPhone,
-  //         smsReciver:senderPhone,
-  //         smsContent:"Your Message Recieved"
-  //       }
-
-  //       if(saveMsg){
-  //         res.status(201).json(finalAnswerInbox) 
-  //       }
+  try{
+    const saveMsg = await inboxes.create({
+        companyid:companyPhone,
+        incomingMessages:messageContent,
+        senderPhone:senderPhone,
+        status:"false"
+      });
+        let finalAnswerInbox = {
+          smsContent:"Your Message Recieved"
+        }
+        if(saveMsg){
+          res.status(201).json(finalAnswerInbox) 
+        }
        
-  // }catch (err) {
-  //   if (!err.statusCode) {
-  //     err.statusCode = 500;
-  //   }
-  //   next(err);
-  // }
+  }catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 }
 }
 
