@@ -15,6 +15,7 @@ module.exports = {
     const  ownerPhone  = req.body.ownerPhone;
     const  ownerName  = req.body.ownerName;
     const  ownerEmail  = req.body.ownerEmail;
+    const  isCompanyVisible   = req.body.isVisible;
   
     try{
       const isCompanyExists = await companies.findOne({ where: { companyPhone:companyPhone } })
@@ -32,6 +33,7 @@ module.exports = {
         ownerName:ownerName,
         ownerPhone:ownerPhone,
         ownerEmail:ownerEmail,
+        isCompanyVisible:isCompanyVisible
         })
         if(result){
           res
@@ -548,6 +550,28 @@ else{
     next(err);
   }
 }
+},
+
+async showCompanyForUser(req, res, next) {
+    const  phoneNumber      = req.body.companyPhone;
+
+    try{
+      const companyName = await companies.findAll({
+        attributes: ['companyName'],
+        where:{companyPhone:phoneNumber,isCompanyVisible:"true"}
+      });
+       if(companyName){
+         res
+        .status(200)
+        .json(companyName)
+      }
+    }catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
 }
+
 
 };

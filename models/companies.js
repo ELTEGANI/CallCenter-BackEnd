@@ -34,7 +34,11 @@ module.exports = (sequelize, DataTypes) => {
     ownerEmail:{
         type:DataTypes.STRING,
         allowNull: false,
-        }
+    },
+    isCompanyVisible:{
+      type:DataTypes.STRING,
+      allowNull: false,
+    }
   }, {});
   companies.associate = function(models) {
     // associations can be defined here

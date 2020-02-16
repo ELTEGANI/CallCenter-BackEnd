@@ -20,6 +20,7 @@ router.post('/getallsms',companyController.getAllSms);
 router.post('/sendReplayToUser',companyController.sendReplyToUser);
 router.post('/registeruser',companyController.signUpUser);
 router.post('/getMenuOrOptionsforuser',isUserAuth,companyController.getMenuOrOptionsforuser);
+router.post('/getcompanyname',isUserAuth,companyController.showCompanyForUser);
 
 
 module.exports = router;
