@@ -17,7 +17,7 @@ router.post('/getmenus',isAuth,companyController.getMenu);
 router.post('/updatemenus',isAuth,companyController.updateMenu);
 router.post('/deletecell',companyController.deleteSms);
 router.post('/getallsms',companyController.getAllSms);
-router.post('/sendReplayToUser',companyController.sendReplyToUser);
+router.post('/sendReplayToUser',isAuth,companyController.sendReplyToUser);
 router.post('/registeruser',companyController.signUpUser);
 router.post('/getMenuOrOptionsforuser',isUserAuth,companyController.getMenuOrOptionsforuser);
 router.post('/getcompanyname',isUserAuth,companyController.showCompanyForUser);

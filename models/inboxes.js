@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
   inboxes.associate = function(models) {
     // associations can be defined here
     inboxes.belongsTo(models.companies, { foreignKey: 'companyid', targetKey: 'id' });
-
+    inboxes.hasMany(models.replay, { foreignKey: 'companyid', targetKey: 'id' });
   };
   return inboxes;
 };

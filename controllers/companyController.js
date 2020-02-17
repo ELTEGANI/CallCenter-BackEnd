@@ -1,4 +1,4 @@
-const { menus ,inboxes,companies,Statistics,User} = require('../models');
+const { menus ,inboxes,companies,Statistics,User,replay} = require('../models');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const sequelize = require('sequelize');
@@ -383,13 +383,27 @@ module.exports = {
     const userPhone = req.body.userPhone;
     const replayContent = req.body.replayContent;
     const cellId ="1002"
-
+    
+    try{
+      const result = await replay.create({
+        companyphone:companyPhone,
+        companyreplay:replayContent,
+        questionid:"1",
+        userphone:userPhone
+        })
+        console.log(result);
+    }catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
      //save data to file
      data = {
       "cellId":cellId,
       "userPhone":userPhone,
       "msgcontent":replayContent
-        }
+      }
      //retreve array from file
      try {
       const json = await Fs.readFile('data/data.json','utf8')
