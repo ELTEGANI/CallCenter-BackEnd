@@ -1,4 +1,4 @@
-const { menus ,inboxes,companies,Statistics,User,replay} = require('../models');
+const { menus ,inboxes,companies,Statistics,Users,replay} = require('../models');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const sequelize = require('sequelize');
@@ -430,41 +430,35 @@ async signUpUser(req, res, next) {
   const  gender           = req.body.gender;
   const  age              = req.body.age;
 
-
-    const user = await User.findOne({ where: { phone_number:phoneNumber } });
-    if (!user) {
-      try {
-        const result = await User.create({
-          phone_number:phoneNumber,
-          gender:gender,
-          age:age,
-        });
-        const token = jwt.sign({ userId: result.id }, process.env.JWT_SEC);
-        res
-          .status(201)
-          .json({
-            accessToken: token
+   
+    try{
+      const user = await Users.findOne({ where: { phone_number:phoneNumber } });
+      if (!user) {
+          const result = await Users.create({
+            phone_number:phoneNumber,
+            gender:gender,
+            age:age,
           });
-      } catch (error) {
-        if (!error.statusCode) {
-          error.statusCode = 500;
-        }
-        next(error);
+          const token = jwt.sign({ userId: result.id }, process.env.JWT_SEC);
+          res
+            .status(201)
+            .json({
+              accessToken: token
+            });
+      
+      } else {
+          const token = jwt.sign({ userId: user.id }, process.env.JWT_SEC);
+          res
+            .status(200)
+            .json({
+              accessToken: token
+            });
       }
-    } else {
-       try{
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SEC);
-        res
-          .status(200)
-          .json({
-            accessToken: token
-          });
-      } catch (error) {  
-        if (!error.statusCode) {
-          error.statusCode = 500;
-        }
-        next(error);
+    }catch(error){
+      if (!error.statusCode) {
+        error.statusCode = 500;
       }
+      next(error);
     }
 },
 
