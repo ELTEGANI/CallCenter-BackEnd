@@ -21,6 +21,7 @@ router.post('/sendReplayToUser',isAuth,companyController.sendReplyToUser);
 router.post('/registeruser',companyController.signUpUser);
 router.post('/getMenuOrOptionsforuser',isUserAuth,companyController.getMenuOrOptionsforuser);
 router.post('/getcompanyname',isUserAuth,companyController.showCompanyForUser);
+router.put('/updateStatus',isUserAuth,companyController.updateInboxStatus);
 
 
 module.exports = router;
