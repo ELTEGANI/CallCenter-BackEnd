@@ -481,9 +481,16 @@ async getMenuOrOptionsforuser(req, res, next){
           orderedMenu.push(item.questionorder+'-'+item.questions)
         })
       )
-       let finalMenu = {
-         smsContent:orderedMenu
-       }
+      let finalMenu = {
+        id:"1",
+        text:orderedMenu.toString(),
+        author:{
+          id:"1",
+          name:"Company",
+          avatar:"image"
+        },
+        createdAt:new Date()
+      }
       if(companyMenu){
       res.status(200).json(finalMenu)
       }
@@ -505,7 +512,7 @@ async getMenuOrOptionsforuser(req, res, next){
         try{
           const answer = await menus.findAll({
             attributes: ['answers'],
-            where:{questionorder:messageContent}
+            where:{questionorder:messageContent,companyid:companyPhone}
           });
 
           let answers = '';
@@ -515,7 +522,14 @@ async getMenuOrOptionsforuser(req, res, next){
             })
           )
            let finalAnswers = {
-             smsContent:answers
+             id:"2",
+             text:answers,
+             author:{
+               id:"1",
+               name:"Company",
+               avatar:"image"
+             },
+             createdAt:new Date()
            }
 
           if(answer){
@@ -545,7 +559,14 @@ else{
         status:"false"
       });
         let finalAnswerInbox = {
-          smsContent:"Your Message Recieved"
+          id:"2",
+          text:"تم استلام رسالتك بنجاح",
+          author:{
+            id:"1",
+            name:"Company",
+            avatar:"image"
+          },
+          createdAt:new Date()
         }
         if(saveMsg){
           res.status(201).json(finalAnswerInbox) 
@@ -579,7 +600,28 @@ async showCompanyForUser(req, res, next) {
       }
       next(err);
     }
-}
+},
 
+async updateInboxStatus(req, res, next) {
+  const  companyPhone      = req.body.companyPhone;
+  const  userNumber      = req.body.userNumber;
+
+  try{
+    const updated = await inboxes.update({
+      status:"true"
+    }, { where: { senderPhone:userNumber,companyid:companyPhone} 
+    });
+    res 
+      .status(200)
+      .json({
+        message: 'status Updated'
+      });
+  }catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+}
 
 };
